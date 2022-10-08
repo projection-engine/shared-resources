@@ -1,4 +1,3 @@
-// THANKS https://stackoverflow.com/questions/8022885/rgb-to-hsv-color-in-javascript
 export default function rgb2hsv(r, g, b) {
     let rabs, gabs, babs, rr, gg, bb, h, s, v, diff, diffc, percentRoundFn;
     rabs = r / 255;
