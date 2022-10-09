@@ -5,7 +5,7 @@ export default class Localization {
         ABOUT: {
             NEW_MESSAGE: "New console message",
             ACTIVE_SHORTCUTS: "Hotkeys: Active view",
-            VERSION: "6.2.0-alpha",
+            VERSION: "1.0.0-alpha",
             LOGGING_ENABLED: "Error logging",
             SHOW_ERROR_LOGS: "Show error logs",
 
