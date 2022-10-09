@@ -1,5 +1,6 @@
 import {v4} from "uuid"
 import PROJECT_PATH from "../../PROJECT_PATH";
+import PROJECT_FILE_EXTENSION from "../../PROJECT_FILE_EXTENSION";
 
 const os = window.require("os")
 const {ipcRenderer} = window.require("electron")
@@ -34,21 +35,16 @@ function createTunnel(channel, data, callback, once) {
 export default class NodeFS {
     static #watcherCallback
     static sep = pathRequire.sep
+    static path
+    static temp
+    static PREVIEW_PATH
+    static ASSETS_PATH
 
-    static get path() {
-        return sessionStorage.getItem(PROJECT_PATH)
-    }
-
-    static get temp() {
-        return sessionStorage.getItem(PROJECT_PATH) + NodeFS.sep + "temp"
-    }
-
-    static get PREVIEW_PATH() {
-        return NodeFS.path + NodeFS.sep + "previews"
-    }
-
-    static get ASSETS_PATH() {
-        return NodeFS.path + NodeFS.sep + "assets"
+    static initializePaths() {
+        NodeFS.path = sessionStorage.getItem(PROJECT_PATH).replace(PROJECT_FILE_EXTENSION, "")
+        NodeFS.temp = NodeFS.path + NodeFS.sep + "temp"
+        NodeFS.PREVIEW_PATH = NodeFS.path + NodeFS.sep + "previews"
+        NodeFS.ASSETS_PATH = NodeFS.path + NodeFS.sep + "assets"
     }
 
     static rootDir = os.homedir()
