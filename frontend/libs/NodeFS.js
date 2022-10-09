@@ -1,6 +1,7 @@
 import {v4} from "uuid"
 import PROJECT_PATH from "../../PROJECT_PATH";
 import PROJECT_FILE_EXTENSION from "../../PROJECT_FILE_EXTENSION";
+import PROJECT_FOLDER_STRUCTURE from "../../PROJECT_FOLDER_STRUCTURE";
 
 const os = window.require("os")
 const {ipcRenderer} = window.require("electron")
@@ -42,9 +43,9 @@ export default class NodeFS {
 
     static initializePaths() {
         NodeFS.path = sessionStorage.getItem(PROJECT_PATH).replace(PROJECT_FILE_EXTENSION, "")
-        NodeFS.temp = NodeFS.path + NodeFS.sep + "temp"
-        NodeFS.PREVIEW_PATH = NodeFS.path + NodeFS.sep + "previews"
-        NodeFS.ASSETS_PATH = NodeFS.path + NodeFS.sep + "assets"
+        NodeFS.temp = NodeFS.path + NodeFS.sep + PROJECT_FOLDER_STRUCTURE.TEMP
+        NodeFS.PREVIEW_PATH = NodeFS.path + NodeFS.sep + PROJECT_FOLDER_STRUCTURE.PREVIEWS
+        NodeFS.ASSETS_PATH = NodeFS.path + NodeFS.sep + PROJECT_FOLDER_STRUCTURE.ASSETS
     }
 
     static rootDir = os.homedir()

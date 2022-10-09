@@ -3,5 +3,6 @@ export default {
     REGISTRY: "assetsRegistry",
     PREVIEWS: "previews",
     DEFAULT_LEVEL: "default.level",
-    ERROR_FILE: "error.log"
+    ERROR_FILE: "error.log",
+    TEMP: "temp"
 }
