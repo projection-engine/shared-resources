@@ -12,6 +12,7 @@
     export let tab
     export let setTab
     export let options
+    export let version
 
     let hidden = true
 
@@ -70,9 +71,9 @@
         >
             <img src={logo} alt="logo"/>
             {#if !hidden}
-                <small>{Localization.COMPONENTS.ABOUT.VERSION}</small>
+                <small>{version}</small>
             {/if}
-            <ToolTip content={Localization.COMPONENTS.ABOUT.VERSION}/>
+            <ToolTip content={version}/>
         </div>
     </div>
 </div>
