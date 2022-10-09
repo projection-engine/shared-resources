@@ -2,6 +2,7 @@ export default class Localization {
 
 
     static COMPONENTS = {
+        UNDO: "Default values",
         ABOUT: {
             NEW_MESSAGE: "New console message",
             ACTIVE_SHORTCUTS: "Hotkeys: Active view",

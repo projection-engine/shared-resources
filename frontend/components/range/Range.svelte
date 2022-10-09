@@ -165,7 +165,7 @@
                 handleChange(originalValue)
         }} class="reset-button">
             <Icon styles="font-size: .9rem">undo</Icon>
-            <ToolTip content={Localization.COMPONENTS.RANGE.UNDO}/>
+            <ToolTip content={Localization.COMPONENTS.UNDO}/>
         </button>
     {/if}
 </div>
