@@ -39,7 +39,6 @@
 
                             if (has)
                                 hasAttribute = hasAttribute || has
-
                         }
                         if (hasAttribute) {
                             targetElement = currentElement

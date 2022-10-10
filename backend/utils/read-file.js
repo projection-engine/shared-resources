@@ -1,9 +1,12 @@
 const path = require("path");
 const fs = require("fs");
 
-
-export default  async function readFile(p, options) {
-    return await new Promise(resolve => {
-        fs.readFile(path.resolve(p), options, (err, res) => resolve([err, res ? res.toString() : undefined]))
-    })
+export default async function readFile(p, options) {
+    let result, error
+    try {
+        result = await fs.promises.readFile(path.resolve(p), options)
+    } catch (err) {
+        error = err
+    }
+    return [error, result ? result.toString() : undefined]
 }

@@ -1,19 +1,14 @@
-
 const {Menu, ipcMain} = require("electron")
 
-function mapMenu(window, e) {
+function mapMenu(window, e, parent) {
     return Array.isArray(e.submenu) ? e.submenu.map(s => {
-        console.log(s.id)
         if (s.id == null)
             return s
         const newData = {...s}
         if (Array.isArray(s.submenu))
-            newData.submenu = mapMenu(window, s)
+            newData.submenu = mapMenu(window, s, parent)
         else
-            newData.click = () => {
-                console.log("clicked", s.id)
-                window.webContents.send(s.id)
-            }
+            newData.click = () => window.webContents.send("context-menu", {id: s.id, group: parent})
         return newData
     }) : undefined
 }
@@ -29,7 +24,7 @@ export default function contextMenuController(window) {
                 return
             const mapped = template.map(e => {
                 if (e.submenu)
-                    return {...e, submenu: mapMenu(window, e)}
+                    return {...e, submenu: mapMenu(window, e, id)}
                 if (e.id)
                     return {...e, click: () => window.webContents.send(e.id)}
                 return e
@@ -49,7 +44,7 @@ export default function contextMenuController(window) {
     )
 
     ipcMain.on(
-        "OPEN_CONTEXT_MENU" ,
+        "OPEN_CONTEXT_MENU",
         (event, contextID) => {
             const context = this.menus.get(contextID)
             if (context)

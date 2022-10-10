@@ -42,10 +42,10 @@ export default class NodeFS {
     static ASSETS_PATH
 
     static initializePaths() {
-        NodeFS.path = sessionStorage.getItem(PROJECT_PATH).replace(PROJECT_FILE_EXTENSION, "")
-        NodeFS.temp = NodeFS.path + NodeFS.sep + PROJECT_FOLDER_STRUCTURE.TEMP
-        NodeFS.PREVIEW_PATH = NodeFS.path + NodeFS.sep + PROJECT_FOLDER_STRUCTURE.PREVIEWS
-        NodeFS.ASSETS_PATH = NodeFS.path + NodeFS.sep + PROJECT_FOLDER_STRUCTURE.ASSETS
+        NodeFS.path = pathRequire.resolve(sessionStorage.getItem(PROJECT_PATH).replace(PROJECT_FILE_EXTENSION, "") + NodeFS.sep)
+        NodeFS.temp = pathRequire.resolve(NodeFS.path + NodeFS.sep + PROJECT_FOLDER_STRUCTURE.TEMP + NodeFS.sep)
+        NodeFS.PREVIEW_PATH = pathRequire.resolve(NodeFS.path + NodeFS.sep + PROJECT_FOLDER_STRUCTURE.PREVIEWS + NodeFS.sep)
+        NodeFS.ASSETS_PATH = pathRequire.resolve(NodeFS.path + NodeFS.sep + PROJECT_FOLDER_STRUCTURE.ASSETS + NodeFS.sep)
     }
 
     static rootDir = os.homedir()
@@ -80,10 +80,6 @@ export default class NodeFS {
 
     static async readdir(path, options) {
         return (await getCall("fs-readdir", {path, options}))
-    }
-
-    static async lstat(path, options) {
-        return (await getCall("fs-lstat", {path, options}))
     }
 
     static async rename(oldPath, newPath) {

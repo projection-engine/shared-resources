@@ -1,6 +1,5 @@
 import FILE_TYPES from "../FILE_TYPES";
 import directoryStructure from "./utils/directory-structure";
-import lstat from "./utils/lstat";
 import readdir from "./utils/readdir";
 import rm from "./utils/rm";
 import readFile from "./utils/read-file";
@@ -15,7 +14,7 @@ let filesToWatch = []
 function unwatch() {
     for (let i = 0; i < watchSignals.length; i++) {
         const signal = watchSignals[i]
-        if(signal)
+        if (signal)
             signal.close()
     }
     watchSignals = []
@@ -51,14 +50,14 @@ export default function fileSystem() {
         event.sender.send("fs-read-" + listenID, result[1])
     })
 
-    ipcMain.on("fs-write", async (event, pkg) => {
-        const {
-            path, data, listenID
-        } = pkg
-        const result = await new Promise(resolve => {
-            fs.writeFile(pathRequire.resolve(path), data, (err) => resolve(err))
-        })
-        event.sender.send("fs-write-" + listenID, result)
+    ipcMain.on("fs-write", async (event, {path, data, listenID}) => {
+        let error
+        try {
+            await fs.promises.writeFile(pathRequire.resolve(path), data)
+        } catch (err) {
+            error = err
+        }
+        event.sender.send("fs-write-" + listenID, error)
     })
 
 
@@ -70,14 +69,15 @@ export default function fileSystem() {
         event.sender.send("fs-rm-" + listenID, result[0])
     })
 
-    ipcMain.on("fs-mkdir", async (event, data) => {
-        const {
-            path, listenID
-        } = data
-        const result = await new Promise(resolve => {
-            fs.mkdir(pathRequire.resolve(path), (err) => resolve(err))
-        })
-        event.sender.send("fs-mkdir-" + listenID, result)
+    ipcMain.on("fs-mkdir", async (event, {path, listenID}) => {
+
+        let error
+        try {
+            await fs.promises.mkdir(pathRequire.resolve(path))
+        } catch (err) {
+            error = err
+        }
+        event.sender.send("fs-mkdir-" + listenID, error)
     })
 
     ipcMain.on("fs-stat", async (event, data) => {
@@ -107,21 +107,15 @@ export default function fileSystem() {
         event.sender.send("fs-readdir-" + listenID, result[1])
     })
 
-    ipcMain.on("fs-lstat", async (event, data) => {
-        const {
-            path, options, listenID
-        } = data
-        const result = await lstat(path, options)
-        event.sender.send("fs-lstat-" + listenID, result)
-    })
 
     ipcMain.on("fs-rename", async (event, data) => {
-        const {
-            oldPath, newPath, listenID
-        } = data
-        const result = await new Promise(resolve => {
-            fs.rename(pathRequire.resolve(oldPath), pathRequire.resolve(newPath), (err) => resolve(err))
-        })
+        const {oldPath, newPath, listenID} = data
+        let result
+        try {
+            await fs.promises.rename(pathRequire.resolve(oldPath), pathRequire.resolve(newPath))
+        } catch (err) {
+            result = err
+        }
         event.sender.send("fs-rename-" + listenID, result)
     })
 }

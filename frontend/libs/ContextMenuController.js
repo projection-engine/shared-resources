@@ -1,19 +1,20 @@
-
-
 const {ipcRenderer} = window.require("electron")
 
-function buildOptions(options, id, listeners) {
+function getOptionID(label, parent) {
+    return label.toUpperCase().trim() + parent
+}
+
+function buildOptions(options, id) {
     const template = []
     options.forEach(option => {
         if (option.divider)
             template.push({type: "separator"})
         else {
-            const internalID = option.label.toUpperCase().trim() + id
+            const internalID = getOptionID(option.label, id)
             const cb = option.onClick || option.callback
 
             if (cb) {
-                ipcRenderer.on(internalID, cb)
-                listeners[internalID] = cb
+
                 const temp = {
                     label: option.label,
                     id: internalID
@@ -21,12 +22,11 @@ function buildOptions(options, id, listeners) {
                 if (option.require) {
                     const mapped = option.require.map(r => {
                         const lower = r.toLowerCase()
-                        console.log(lower)
-                        if(lower.includes("control"))
+                        if (lower.includes("control"))
                             return "CmdOrCtrl"
-                        if(lower.includes("alt"))
+                        if (lower.includes("alt"))
                             return "Alt"
-                        if(lower.includes("shift"))
+                        if (lower.includes("shift"))
                             return "Shift"
 
                         return r.toUpperCase().replace("KEY", "").replace("ARROW", "")
@@ -38,7 +38,7 @@ function buildOptions(options, id, listeners) {
                 template.push({
                     label: option.label,
                     id: internalID,
-                    submenu: buildOptions(option.children, id, listeners)
+                    submenu: buildOptions(option.children, id)
                 })
 
         }
@@ -46,14 +46,36 @@ function buildOptions(options, id, listeners) {
     return template
 }
 
+function findOptions(option, toFind, parent) {
+    if (option.children)
+        option.children.forEach(c => findOptions(c, toFind, parent))
+    if (toFind === getOptionID(option, parent)) {
+        if (option.onClick != null)
+            option.onClick()
+        else if (option.callback)
+            option.callback()
+    }
+}
+
 export default class ContextMenuController {
     static data = {targets: {}, focused: undefined}
+    static #initialized = false
 
     static mount(metadata, options, target, triggers = [], onFocus) {
-        const listeners = {}
-        ipcRenderer.send("REGISTER_CONTEXT_MENU" , {
+        if (!ContextMenuController.#initialized) {
+            ipcRenderer.on("context-menu", (ev, {id, group}) => {
+                const groupData = ContextMenuController.data.targets[group]
+                if (!groupData)
+                    return
+                groupData.options.forEach(o => findOptions(o, id, group))
+            })
+            ContextMenuController.#initialized = true
+        }
+
+        const template = buildOptions(options, target)
+        ipcRenderer.send("REGISTER_CONTEXT_MENU", {
             id: target,
-            template: buildOptions(options, target, listeners)
+            template
         })
 
         ContextMenuController.data.targets[target] = {
@@ -62,7 +84,7 @@ export default class ContextMenuController {
             triggers,
             onFocus,
             metadata,
-            listeners
+            template
         }
     }
 
@@ -71,9 +93,6 @@ export default class ContextMenuController {
         const old = ContextMenuController.data.targets[target]
         if (!old)
             return
-
-        Object.entries(old.listeners)
-            .forEach(([internalID, onClick]) => ipcRenderer.removeListener(internalID, onClick))
         delete ContextMenuController.data.targets[target]
     }
 }
