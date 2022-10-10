@@ -9,6 +9,7 @@ function mapMenu(window, e, parent) {
             newData.submenu = mapMenu(window, s, parent)
         else
             newData.click = () => window.webContents.send("context-menu", {id: s.id, group: parent})
+
         return newData
     }) : undefined
 }
@@ -26,7 +27,7 @@ export default function contextMenuController(window) {
                 if (e.submenu)
                     return {...e, submenu: mapMenu(window, e, id)}
                 if (e.id)
-                    return {...e, click: () => window.webContents.send(e.id)}
+                    return {...e, click: () => window.webContents.send("context-menu", {id: e.id, group: id})}
                 return e
             })
             const menu = Menu.buildFromTemplate(mapped)
