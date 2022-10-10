@@ -14,7 +14,7 @@ export default async function  directoryStructure(d){
             let file = path.resolve(dir, list[i])
             const stat = await fs.promises.stat(file)
             results.push(file)
-            if (stat && stat.isDirectory) {
+            if (stat && stat.isDirectory()) {
                 results.push(...(await directoryStructure(file)))
                 if (!--pending) return results
             } else if (!--pending) return results

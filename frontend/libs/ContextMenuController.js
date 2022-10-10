@@ -1,6 +1,8 @@
 const {ipcRenderer} = window.require("electron")
 
 function getOptionID(label, parent) {
+    if (typeof label !== "string")
+        console.trace(label)
     return label.toUpperCase().trim() + parent
 }
 
@@ -47,9 +49,13 @@ function buildOptions(options, id) {
 }
 
 function findOptions(option, toFind, parent) {
+    if (!option.label)
+        return
+
     if (option.children)
         option.children.forEach(c => findOptions(c, toFind, parent))
-    if (toFind === getOptionID(option, parent)) {
+
+    if (toFind === getOptionID(option.label, parent)) {
         if (option.onClick != null)
             option.onClick()
         else if (option.callback)
