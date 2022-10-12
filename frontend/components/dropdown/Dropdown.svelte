@@ -45,6 +45,10 @@
     const portal = createPortal(500, false)
     $: open ? portal.open() : portal.close()
     onMount(() => {
+        document.onpointerlockchange = () => {
+            if (document.pointerLockElement != null)
+                close()
+        }
         portal.create(modal)
         modal.closeDropdown = () => close()
     })
