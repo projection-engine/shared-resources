@@ -10,23 +10,32 @@
     export let color = "unset"
     let ref
     let initial = {}
+    function updateTarget(element, value){
+        if(type === "width"){
+            element.style.maxWidth = value + "px"
+            element.style.minWidth = value + "px"
+            return
+        }
+        element.style.maxHeight = value + "px"
+        element.style.minHeight = value + "px"
+    }
 
     const handleMouseMove = (event) => {
-        if (onResize)
-            onResize()
         try {
+            if (onResize)
+                onResize()
             const bBox = ref.previousElementSibling.getBoundingClientRect()
             const prevBbox = ref.nextElementSibling.getBoundingClientRect()
             if (type === "width") {
                 const newW = (event.clientX - bBox.left)
                 const offset = newW - bBox.width
-                ref.previousElementSibling.style.width = (event.clientX - bBox.left) + "px"
-                ref.nextElementSibling.style.width = (prevBbox.width - offset) + "px"
+                updateTarget(ref.previousElementSibling, event.clientX - bBox.left)
+                updateTarget(ref.nextElementSibling, prevBbox.width - offset)
             } else {
                 const newH = (event.clientY - bBox.top)
                 const offset = newH - bBox.height
-                ref.previousElementSibling.style.height = (event.clientY - bBox.top) + "px"
-                ref.nextElementSibling.style.height = (prevBbox.height - offset) + "px"
+                updateTarget(ref.previousElementSibling, event.clientY - bBox.top)
+                updateTarget(ref.nextElementSibling, prevBbox.height - offset)
             }
 
         } catch (err) {
@@ -61,6 +70,7 @@
                 onResizeStart(false)
             event.currentTarget.parentNode.style.userSelect = "none"
             event.currentTarget.style.transition = "none"
+            handleMouseMove(event)
             document.addEventListener("mousemove", handleMouseMove)
             document.addEventListener("mouseup", handleMouseUp, {once: true})
         }
@@ -125,15 +135,15 @@
 <div
         on:mousedown={handleMouseDown}
         style={`
-        background: ${color};
-        min-height: ${type === "height" ? "3px" : "100%"};
-        max-height: ${type === "height" ? "3px" : "100%"};
-        min-width: ${type === "width" ? "3px" : "100%"};
-        max-width: ${type === "width" ? "3px" : "100%"};
-        cursor: ${type === "width" ? "ew-resize" : "ns-resize"};
-    `}
+
+            min-height: ${type === "height" ? "2px" : "100%"};
+            max-height: ${type === "height" ? "2px" : "100%"};
+            min-width: ${type === "width" ? "2px" : "100%"};
+            max-width: ${type === "width" ? "2px" : "100%"};
+            cursor: ${type === "width" ? "ew-resize" : "ns-resize"};
+        `}
         data-disabled={`${disabled}`}
-        class={"wrapper"}
+        class="wrapper"
         bind:this={ref}
 ></div>
 
@@ -141,10 +151,9 @@
     .wrapper {
         background: inherit;
         cursor: pointer;
-        border-radius: 5px;
-        transition: background-color 150ms linear;
-        min-height: 3px;
-        min-width: 3px;
+        background: var(--pj-border-primary);
+        min-height: 2px;
+        min-width: 2px;
 
     }
 
