@@ -10,9 +10,6 @@
         }, {once: true})
     }
     const pushAlert = (message, type, onClick, delay = 3500) => {
-        const newElement = document.createElement("div")
-        target.appendChild(newElement)
-        target.style.zIndex = "9999"
         let variant
         switch (type) {
             case "success":
@@ -28,6 +25,19 @@
                 variant = {color: "#ff5555", icon: "error"}
                 break
         }
+        alert.cache.push({
+            message,
+            type,
+            variant
+        })
+        alert.listeners.forEach(c => c.cb())
+        if (!alert.activeAlerts)
+            return
+
+        const newElement = document.createElement("div")
+        target.appendChild(newElement)
+        target.style.zIndex = "9999"
+
 
         setTimeout(() => close(newElement), delay)
         newElement.innerHTML = `
@@ -55,6 +65,22 @@
             )
     }
     onMount(() => {
+        alert.clearCache= () => {
+            alert.cache = []
+            alert.listeners.forEach(e => e.cb())
+        }
+        alert.listeners = []
+        alert.bindListener = (key, cb) => {
+            alert.listeners.push({key, cb})
+        }
+        alert.removeListener = (key) => {
+            alert.listeners = alert.listeners.filter(v => v.key !== key)
+        }
+        alert.cache = []
+        alert.activeAlerts = true
+        alert.toggleAlerts = () => {
+            alert.activeAlerts = !alert.activeAlerts
+        }
         alert.pushAlert = pushAlert
     })
 </script>
