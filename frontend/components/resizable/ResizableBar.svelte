@@ -121,10 +121,12 @@
 
     })
     onDestroy(() => {
-        if (ref.previousElementSibling)
-            ref.previousElementSibling.style[type] = "100%"
-        if (ref.nextElementSibling)
-            ref.nextElementSibling.style[type] = "100%"
+        if(ref) {
+            if (ref.previousElementSibling)
+                ref.previousElementSibling.style[type] = "100%"
+            if (ref.nextElementSibling)
+                ref.nextElementSibling.style[type] = "100%"
+        }
         return () => {
             mutation.disconnect()
             resize.disconnect()
