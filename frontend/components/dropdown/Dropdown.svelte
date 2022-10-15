@@ -33,8 +33,10 @@
         if (onClose && open)
             onClose()
         open = false
-        modal.style.display = "none"
-        modal.style.zIndex = "-1"
+        if(modal != null) {
+            modal.style.display = "none"
+            modal.style.zIndex = "-1"
+        }
     }
 
     function handler(event) {
