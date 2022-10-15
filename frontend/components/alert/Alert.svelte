@@ -9,6 +9,7 @@
             target.removeChild(newElement)
         }, {once: true})
     }
+
     const pushAlert = (message, type, onClick, delay = 3500) => {
         let variant
         switch (type) {
@@ -30,6 +31,9 @@
             type,
             variant
         })
+        if(alert.cache.length >= 25)
+            alert.cache.shift()
+
         alert.listeners.forEach(c => c.cb())
         if (!alert.activeAlerts)
             return
