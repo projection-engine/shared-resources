@@ -1,5 +1,5 @@
 export default {
-    MESH: ".mesh",
+
     LEVEL: ".level",
     UI_LAYOUT: ".ui",
     COMPONENT: ".component",
@@ -10,7 +10,8 @@ export default {
     TERRAIN: ".terrain",
     TEXTURE: ".texture",
     REGISTRY: ".reg",
-    SCENE: ".scene",
     PREVIEW: ".preview",
+    PRIMITIVE: ".primitive",
+    COLLECTION: ".collection"
 
 }
