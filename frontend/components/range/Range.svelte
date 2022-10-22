@@ -1,10 +1,8 @@
 <script>
 
     import {onDestroy, onMount} from "svelte";
-    import Localization from "../../libs/Localization";
 
     import getPercentage from "./utils/get-percentage";
-    import Icon from "../icon/Icon.svelte";
     import ToolTip from "../tooltip/ToolTip.svelte";
 
     const toDeg = 180 / Math.PI

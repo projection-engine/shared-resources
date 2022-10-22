@@ -1,9 +1,8 @@
 <script>
     import Icon from "./icon/Icon.svelte";
-    import Localization from "../libs/Localization";
     import ResizableBar from "./resizable/ResizableBar.svelte";
     import ToolTip from "./tooltip/ToolTip.svelte";
-    import logo from "../../APP_LOGO.png"
+    import logo from "../../APP_LOGO.js"
     import {onMount} from "svelte";
 
     const THRESHOLD = 65
