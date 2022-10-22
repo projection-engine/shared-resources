@@ -8,22 +8,32 @@
     export let type = "width"
     export let disabled = false
     export let color = "unset"
+
+    let parentBBox
     let ref
+    let resize
+    let mutation
     let initial = {}
-    function updateTarget(element, value){
-        if(type === "width"){
-            element.style.maxWidth = value + "px"
-            element.style.minWidth = value + "px"
+
+    function updateTarget(element, value) {
+        if (type === "width") {
+            if( value <= parentBBox.width  && value > 0) {
+                element.style.maxWidth = value + "px"
+                element.style.minWidth = value + "px"
+            }
             return
         }
-        element.style.maxHeight = value + "px"
-        element.style.minHeight = value + "px"
+        if( value <= parentBBox.height  && value > 0) {
+            element.style.maxHeight = value + "px"
+            element.style.minHeight = value + "px"
+        }
     }
 
     const handleMouseMove = (event) => {
         try {
             if (onResize)
                 onResize()
+
             const bBox = ref.previousElementSibling.getBoundingClientRect()
             const prevBbox = ref.nextElementSibling.getBoundingClientRect()
             if (type === "width") {
@@ -56,7 +66,7 @@
         }
     }
     const handleMouseDown = (event) => {
-
+        parentBBox = ref.parentElement.getBoundingClientRect()
         if (!disabled) {
             const siblings = Array.from(event.currentTarget.parentElement.children)
             const t = type === "width" ? "width" : "height"
@@ -92,10 +102,10 @@
             console.warn(err)
         }
     }
-    let resize, mutation
+
     onMount(() => {
-        const resize = new ResizeObserver(callback)
-        const mutation = new MutationObserver(callback)
+        resize = new ResizeObserver(callback)
+        mutation = new MutationObserver(callback)
 
         if (!ref.previousElementSibling || !ref.nextElementSibling)
             return
@@ -121,16 +131,16 @@
 
     })
     onDestroy(() => {
-        if(ref) {
+        if (ref) {
             if (ref.previousElementSibling)
                 ref.previousElementSibling.style[type] = "100%"
             if (ref.nextElementSibling)
                 ref.nextElementSibling.style[type] = "100%"
         }
-        return () => {
+        if (mutation)
             mutation.disconnect()
+        if (resize)
             resize.disconnect()
-        }
     })
 
 </script>

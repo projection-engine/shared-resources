@@ -25,15 +25,10 @@
     export let integer = undefined;
 
     let changed = false
-    let originalValue
     let inputRef
     let dragged = false
     let currentValue = 0
 
-    $: {
-        if (!changed)
-            originalValue = value
-    }
     $: percentageFilled = minValue != null && maxValue != null ? getPercentage(currentValue, maxValue) : undefined
     $: incrementData = (incrementPercentage ? incrementPercentage : 0.1)
     const handleMouseMove = (e) => {
@@ -60,23 +55,19 @@
     }
 
     const onChange = (e) => {
-        if (e.type === "keydown" && e.code !== "Enter")
+        let finalValue = parseFloat(inputRef.value)
+        if (e.type === "keydown" && e.code !== "Enter" || isNaN(finalValue))
             return
         else if (e.type === "keydown")
             inputRef.blur()
 
+        if (maxValue !== undefined && finalValue > maxValue)
+            finalValue = maxValue
+        if (minValue !== undefined && finalValue < minValue)
+            finalValue = minValue
 
-        let finalValue = parseFloat(inputRef.value)
-
-        if (!isNaN(finalValue)) {
-            if (maxValue !== undefined && finalValue > maxValue)
-                finalValue = maxValue
-            if (minValue !== undefined && finalValue < minValue)
-                finalValue = minValue
-
-            if (handleChange)
-                handleChange(finalValue)
-        }
+        if (handleChange)
+            handleChange(finalValue)
 
         if (onFinish !== undefined)
             onFinish(finalValue)
@@ -131,14 +122,14 @@
 </script>
 
 
-<div class="wrapper" style={disabled ? "background: transparent" : ""}>
+<div class="wrapper" style={disabled ? "background: transparent; color: #999" : ""}>
     {#if percentageFilled != null}
         <div class="percentage" style="width: {percentageFilled}%"></div>
     {/if}
-    {#if label }
+    {#if label}
         <div
-                style={`color: ${disabled ? "#999" : "var(--pj-color-tertiary)"};`}
                 class="title"
+                data-overflow="-"
         >
             {label}
             {#if !disabled}
@@ -157,17 +148,6 @@
             step="any"
             on:blur={onChange}
     >
-    {#if originalValue != null && !disabled && !noOriginal}
-        <button on:click={() => {
-            if (onFinish !== undefined)
-                onFinish(originalValue)
-            else if (handleChange)
-                handleChange(originalValue)
-        }} class="reset-button">
-            <Icon styles="font-size: .9rem">undo</Icon>
-            <ToolTip content={Localization.COMPONENTS.UNDO}/>
-        </button>
-    {/if}
 </div>
 
 <style>
@@ -178,59 +158,46 @@
         height: 100%;
     }
 
-    .reset-button {
-        border: none;
-        width: 17px;
-        height: 17px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        overflow: hidden;
-    }
-
     .wrapper {
         background: var(--background-input);
         display: flex;
         align-items: center;
         gap: 2px;
-
         color: var(--pj-color-tertiary);
-
         overflow: hidden;
         max-width: 100%;
         user-select: none !important;
-        font-size: 0.7rem;
+
         position: relative;
         border: var(--pj-border-primary) 1px solid;
         border-radius: 3px;
         width: 100%;
-        height: 23px;
+        height: 20px;
+        opacity: .85;
     }
 
     .wrapper:active {
+        opacity: 1;
+        color: var(--pj-color-primary);
         background: var(--pj-background-primary);
     }
 
     .wrapper:focus-within {
+        opacity: 1;
+        color: var(--pj-color-primary);
         background: var(--pj-background-primary) !important;
     }
 
     .wrapper:hover {
-        background: var(--background-input-lighter);
+        opacity: 1;
+        color: var(--pj-color-primary);
     }
 
     .title {
-        position: absolute;
-        z-index: 2;
-
-        left: 0;
-        top: 0;
-        height: 23px;
-        width: fit-content;
+        color: inherit;
+        max-width: 50%;
         padding: 0 4px;
-        display: flex;
-        align-items: center
+        font-size: 0.7rem;
     }
 
     .draggable {
@@ -238,14 +205,14 @@
         position: relative;
         z-index: 1;
         border: none;
-        height: 23px;
+        height: 20px;
 
         width: 100%;
 
         overflow: hidden;
         cursor: col-resize;
         outline: none;
-        color: var(--pj-color-quaternary);
+        color: inherit;
         font-weight: normal;
         text-align: right;
         font-size: 0.7rem;
