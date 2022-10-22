@@ -193,7 +193,8 @@
 
     .title {
         color: inherit;
-        max-width: 50%;
+        max-width: 75%;
+        width: 75%;
         padding: 0 4px;
         font-size: 0.7rem;
     }
