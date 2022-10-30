@@ -192,6 +192,8 @@
     }
 
     .title {
+        position: relative;
+        z-index: 10;
         color: inherit;
         max-width: 75%;
         width: 75%;

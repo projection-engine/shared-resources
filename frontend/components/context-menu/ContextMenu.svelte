@@ -6,7 +6,7 @@
     const {ipcRenderer} = window.require("electron")
     const RIGHT_BUTTON = 2
 
-    let startPosition = undefined, locked = false
+    let startPosition = undefined
     let contextMenu
 
     let open = false
@@ -17,7 +17,9 @@
 
 
     const handleContext = (event) => {
-        if (startPosition && !locked && ContextMenuController.data.focused) {
+        if(document.pointerLockElement != null)
+            return
+        if (startPosition &&  ContextMenuController.data.focused) {
             event.preventDefault()
             if (checkMouseOffset(startPosition, event)) {
                 let targetElement
@@ -87,9 +89,6 @@
     onMount(() => {
         document.addEventListener("mousedown", handleMouseDown)
         contextMenu.parentElement.addEventListener("mouseup", handleContext)
-        document.onpointerlockchange = () => {
-            locked = !!document.pointerLockElement
-        }
     })
     onDestroy(() => {
         document.onpointerlockchange = undefined
