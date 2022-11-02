@@ -9,18 +9,19 @@
 
 
     export let label = undefined;
-    export let precision = 2
     export let maxValue = undefined;
     export let minValue = undefined;
     export let onFinish = undefined
     export let disabled = undefined;
-    export let incrementPercentage = .01
+    export let incrementPercentage = .0001
     export let value = 0
     export let noOriginal
-
     export let handleChange
     export let isAngle
     export let integer = undefined;
+
+    $: precision = incrementPercentage != null && incrementPercentage.toString().split(".")[1] != null ? incrementPercentage.toString().split(".")[1].length : 4
+
 
     let changed = false
     let inputRef
