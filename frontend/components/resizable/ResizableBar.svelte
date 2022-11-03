@@ -1,13 +1,11 @@
 <script>
     import {onDestroy, onMount} from "svelte";
 
-    export let resetTargets = {}
     export let onResize = undefined
     export let onResizeEnd = undefined
     export let onResizeStart = undefined
     export let type = "width"
     export let disabled = false
-    export let color = "unset"
 
     let parentBBox
     let ref
@@ -16,24 +14,16 @@
     let initial = {}
 
     function updateTarget(element, value) {
-        if (type === "width") {
-            if( value <= parentBBox.width  && value > 0) {
-                element.style.maxWidth = value + "px"
-                element.style.minWidth = value + "px"
-            }
-            return
-        }
-        if( value <= parentBBox.height  && value > 0) {
-            element.style.maxHeight = value + "px"
-            element.style.minHeight = value + "px"
-        }
+        if (type === "width" && value <= parentBBox.width && value > 0)
+            element.style.width = value + "px"
+        else if (value <= parentBBox.height && value > 0)
+            element.style.height = value + "px"
     }
 
     const handleMouseMove = (event) => {
         try {
             if (onResize)
                 onResize()
-
             const bBox = ref.previousElementSibling.getBoundingClientRect()
             const prevBbox = ref.nextElementSibling.getBoundingClientRect()
             if (type === "width") {
@@ -116,19 +106,6 @@
         initial = {initialW1, initialW2, initialH1, initialH2}
         mutation.observe(ref.parentNode, {childList: true})
         resize.observe(document.body)
-
-        if (type === "width") {
-            if (resetTargets?.previous)
-                ref.previousElementSibling.style.width = initial.initialW1
-            if (resetTargets?.next)
-                ref.nextElementSibling.style.width = initial.initialW2
-        } else {
-            if (resetTargets?.previous)
-                ref.previousElementSibling.style.height = initial.initialH1
-            if (resetTargets?.next)
-                ref.nextElementSibling.style.height = initial.initialH2
-        }
-
     })
     onDestroy(() => {
         if (ref) {

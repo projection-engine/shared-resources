@@ -13,14 +13,14 @@
     export let minValue = undefined;
     export let onFinish = undefined
     export let disabled = undefined;
-    export let incrementPercentage = .0001
+    export let incrementPercentage = .001
     export let value = 0
     export let noOriginal
     export let handleChange
     export let isAngle
     export let integer = undefined;
 
-    $: precision = incrementPercentage != null && incrementPercentage.toString().split(".")[1] != null ? incrementPercentage.toString().split(".")[1].length : 4
+    $: precision = incrementPercentage != null && incrementPercentage.toString().split(".")[1] != null ? incrementPercentage.toString().split(".")[1].length : 3
 
 
     let changed = false
