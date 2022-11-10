@@ -96,7 +96,7 @@
     })
 </script>
 
-<div bind:this={target} className="target"></div>
+<div bind:this={target} class="target"></div>
 <style>
     .target {
         position: fixed;
