@@ -6,7 +6,8 @@
     const close = (newElement) => {
         newElement.className = "outAnimation alert-modal"
         newElement.addEventListener("animationend", () => {
-            target.removeChild(newElement)
+            if (newElement.parentElement === target)
+                target.removeChild(newElement)
         }, {once: true})
     }
 
@@ -14,10 +15,10 @@
         let variant
         switch (type) {
             case "success":
-                variant = {color: "#00F400", icon: "done"}
+                variant = {color: "#03c403", icon: "done"}
                 break
             case "alert":
-                variant = {color: "#FFFF3E", icon: "warning"}
+                variant = {color: "#d97a00", icon: "warning"}
                 break
             case "info":
                 variant = {color: "#0095ff", icon: "info"}
@@ -31,7 +32,7 @@
             type,
             variant
         })
-        if(alert.cache.length >= 25)
+        if (alert.cache.length >= 25)
             alert.cache.shift()
 
         alert.listeners.forEach(c => c.cb())
@@ -39,9 +40,15 @@
             return
 
         const newElement = document.createElement("div")
+
+        let i = 0
+        while (target.children.length > 4) {
+            target.removeChild(target.children[i])
+            i++
+        }
+
         target.appendChild(newElement)
         target.style.zIndex = "9999"
-
 
         setTimeout(() => close(newElement), delay)
         newElement.innerHTML = `
@@ -69,7 +76,7 @@
             )
     }
     onMount(() => {
-        alert.clearCache= () => {
+        alert.clearCache = () => {
             alert.cache = []
             alert.listeners.forEach(e => e.cb())
         }
@@ -89,16 +96,17 @@
     })
 </script>
 
-<div bind:this={target} class="target"></div>
+<div bind:this={target} className="target"></div>
 <style>
     .target {
         position: fixed;
         z-index: 9999;
-        bottom: 8px;
-        left: 8px;
+        bottom: 4px;
+        left: 50%;
 
+        transform: translateX(-50%);
         display: grid;
         align-items: flex-end;
-        gap: 8px;
+        gap: 4px;
     }
 </style>

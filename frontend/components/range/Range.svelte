@@ -20,13 +20,19 @@
     export let isAngle
     export let integer = undefined;
 
-    $: precision = incrementPercentage != null && incrementPercentage.toString().split(".")[1] != null ? incrementPercentage.toString().split(".")[1].length : 3
+    $: precision = incrementPercentage === 1 || integer ? 0 : incrementPercentage != null && incrementPercentage.toString().split(".")[1] != null ? incrementPercentage.toString().split(".")[1].length : 3
 
 
     let changed = false
     let inputRef
     let dragged = false
     let currentValue = 0
+
+    function parseToString(v) {
+        if (!precision)
+            return parseInt(v)
+        return parseFloat(v).toFixed(precision)
+    }
 
     $: percentageFilled = minValue != null && maxValue != null ? getPercentage(currentValue, maxValue) : undefined
     $: incrementData = (incrementPercentage ? incrementPercentage : 0.1)
@@ -35,9 +41,9 @@
         dragged = true
         let increment = integer ? 1 : Math.abs(incrementData * multiplier)
         if (multiplier < 0 && (currentValue <= maxValue || !maxValue))
-            currentValue = parseFloat((currentValue + increment).toFixed(precision ? precision : 1))
+            currentValue = currentValue + increment
         else if (currentValue >= minValue || !minValue)
-            currentValue = parseFloat((currentValue - increment).toFixed(precision ? precision : 1))
+            currentValue = currentValue - increment
 
         if (integer)
             currentValue = Math.round(parseInt(currentValue))
@@ -48,7 +54,7 @@
             currentValue = minValue
         if (!changed)
             changed = true
-        inputRef.value = (currentValue * (isAngle ? toDeg : 1)).toFixed(precision ? precision : 1)
+        inputRef.value = parseToString(currentValue * (isAngle ? toDeg : 1))
         if (handleChange)
             handleChange(currentValue)
     }
@@ -78,7 +84,7 @@
     $: {
         if (!dragged && inputRef) {
             const parsedValue = isNaN(parseFloat(value)) ? 0 : parseFloat(parseFloat(value).toFixed(precision ? precision : 1))
-            inputRef.value = (parsedValue * (isAngle ? toDeg : 1)).toFixed(precision ? precision : 1)
+            inputRef.value = parseToString(parsedValue * (isAngle ? toDeg : 1))
             currentValue = parsedValue
         }
     }
@@ -121,9 +127,9 @@
 </script>
 
 
-<div class="wrapper" style={disabled ? "background: transparent; color: #999" : ""}>
+<div className="wrapper" style={disabled ? "background: transparent; color: #999" : ""}>
     {#if percentageFilled != null}
-        <div class="percentage" style="width: {percentageFilled}%"></div>
+        <div className="percentage" style="width: {percentageFilled}%"></div>
     {/if}
     {#if label}
         <div
@@ -194,7 +200,7 @@
 
     .title {
         position: relative;
-        z-index: 10;
+        z-index: 0;
         color: inherit;
         max-width: 75%;
         width: 75%;
@@ -203,8 +209,10 @@
     }
 
     .draggable {
+
         background: none;
-        position: relative;
+        position: absolute;
+
         z-index: 1;
         border: none;
         height: 20px;

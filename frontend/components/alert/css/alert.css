@@ -1,76 +1,66 @@
-.wrapper.alert-modal {
-    position: fixed;
-    top: unset !important;
-    bottom: 8px !important;
-    left: 8px !important;
-    transform: none !important;
-    display: grid;
-    align-items: flex-end;
-    gap: 8px;
-}
 
 .alertContainer.alert-modal {
     --background: #f55;
-border: var(--pj-border-primary) 1px solid;
-    border-left: var(--background) 3px solid;
-    color: var(--pj-color-primary) !important;
-    background: var(--pj-background-primary) !important;
+    color: white !important;
+    font-weight: 550;
+    background: var(--background) !important;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    font-size: .65rem;
     transition: 150ms ease;
-    padding: 0 8px;
+    padding: 0 4px;
     width: fit-content;
-    max-width: 500px;
-    height: 35px;
+    max-width: 25vw;
+    height: 25px;
     position: relative;
-    border-radius: 0 5px 5px 0;
+    border-radius: 12.5px;
     box-shadow: var(--pj-boxshadow);
     overflow: hidden;
     opacity: 0;
-    animation: enterALERT_MODAL 150ms ease-in-out forwards;
+    animation: enterAnimation 150ms ease-in-out forwards;
 }
 
 .outAnimation.alert-modal {
-    animation: exitALERT_MODAL 150ms ease-in-out forwards;
+    animation: exitAnimation 150ms ease-in-out forwards;
 }
 
-@keyframes exitALERT_MODAL {
+@keyframes exitAnimation {
     0% {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateY(0);
     }
 
     100% {
         opacity: 0;
-        transform: translateX(-100%);
+        transform: translateY(calc(100% + 8px));
     }
 }
 
-@keyframes enterALERT_MODAL {
+@keyframes enterAnimation {
     0% {
         opacity: 0;
-        transform: translateX(-100%);
+        transform: translateY(calc(100% + 8px));
     }
 
     100% {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateY(0);
     }
 }
 
 .icon.alert-modal {
     width: 20px;
-    height: 25px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .icon.alert-modal > * {
-    color: var(--background) !important;
-    font-size: 1.1rem;
+    color: white !important;
+    font-size: 1rem;
 }
 
 .button.alert-modal {
@@ -86,12 +76,12 @@ border: var(--pj-border-primary) 1px solid;
     outline: none;
     padding: 0;
     color: var(--pj-color-secondary);
-    border-radius: 5px;
+    border-radius: 50%;
     transition: 150ms linear;
     cursor: pointer;
 }
 
-.button.alert-modal:hover , .button.alert-modal:active {
+.button.alert-modal:hover, .button.alert-modal:active {
     color: #f55;
     background: transparent !important;
 }
