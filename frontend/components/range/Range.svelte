@@ -127,9 +127,9 @@
 </script>
 
 
-<div className="wrapper" style={disabled ? "background: transparent; color: #999" : ""}>
+<div class="wrapper" style={disabled ? "background: transparent; color: #999" : ""}>
     {#if percentageFilled != null}
-        <div className="percentage" style="width: {percentageFilled}%"></div>
+        <div class="percentage" style="width: {percentageFilled}%"></div>
     {/if}
     {#if label}
         <div
