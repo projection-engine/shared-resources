@@ -37,26 +37,32 @@
     $: percentageFilled = minValue != null && maxValue != null ? getPercentage(currentValue, maxValue) : undefined
     $: incrementData = (incrementPercentage ? incrementPercentage : 0.1)
     const handleMouseMove = (e) => {
-        const multiplier = -e.movementX
-        dragged = true
-        let increment = integer ? 1 : Math.abs(incrementData * multiplier)
-        if (multiplier < 0 && (currentValue <= maxValue || !maxValue))
-            currentValue = currentValue + increment
-        else if (currentValue >= minValue || !minValue)
-            currentValue = currentValue - increment
+        try{
 
-        if (integer)
-            currentValue = Math.round(parseInt(currentValue))
+            const multiplier = -e.movementX
+            dragged = true
+            let increment = integer ? 1 : Math.abs(incrementData * multiplier)
+            if (multiplier < 0 && (currentValue <= maxValue || !maxValue))
+                currentValue = currentValue + increment
+            else if (currentValue >= minValue || !minValue)
+                currentValue = currentValue - increment
 
-        if (currentValue > maxValue && maxValue !== undefined)
-            currentValue = maxValue
-        else if (currentValue < minValue && minValue !== undefined)
-            currentValue = minValue
-        if (!changed)
-            changed = true
-        inputRef.value = parseToString(currentValue * (isAngle ? toDeg : 1))
-        if (handleChange)
-            handleChange(currentValue)
+            if (integer)
+                currentValue = Math.round(parseInt(currentValue))
+
+            if (currentValue > maxValue && maxValue !== undefined)
+                currentValue = maxValue
+            else if (currentValue < minValue && minValue !== undefined)
+                currentValue = minValue
+            if (!changed)
+                changed = true
+            inputRef.value = parseToString(currentValue * (isAngle ? toDeg : 1))
+            if (handleChange)
+                handleChange(currentValue)
+        }catch(err){
+            console.warn(err)
+            document.body.removeEventListener("mousemove", handleMouseMove)
+        }
     }
 
     const onChange = (e) => {
@@ -114,7 +120,6 @@
 
     }
     onMount(() => {
-
         document.onpointerlockerror = (err) => {
             console.error(err)
             document.exitPointerLock()

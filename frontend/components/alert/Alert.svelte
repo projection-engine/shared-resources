@@ -107,6 +107,7 @@
         transform: translateX(-50%);
         display: grid;
         align-items: flex-end;
+        justify-items: center;
         gap: 4px;
     }
 </style>
