@@ -1,9 +1,7 @@
 <script>
     import Dropdown from "../dropdown/Dropdown.svelte";
-    import rgb2hsv from "./utils/rgb-2-hsv";
     import ToolTip from "../tooltip/ToolTip.svelte";
-    import ColorCanvas from "./ColorCanvas.svelte";
-    import hsv2Hsl from "./utils/hsv-2-hsl";
+    import HsvPicker from "./HsvPicker.svelte";
 
 
     let changed = false
@@ -14,34 +12,15 @@
     export let value
     export let label
     export let disabled
-    let hsl = {}
+
+    let startColor = [0, 0, 0]
     let initializationChanged
 
     $: {
-        let hue, saturation, colorValue
         if (value && !initializationChanged) {
-            if (typeof value === "string") {
-                const split = value.match(/[\d.]+/g)
-                const [r, g, b] = split.map(v => parseFloat(v))
-                const hsv = rgb2hsv(r, g, b)
-                hue = hsv.h
-                saturation = hsv.s
-                colorValue = hsv.v
-            } else if (Array.isArray(value)) {
-                const hsv = rgb2hsv(value[0], value[1], value[2])
-                hue = hsv.h
-                saturation = hsv.s
-                colorValue = hsv.v
-            } else if (typeof value === "object") {
-                const hsv = rgb2hsv(value.r, value.g, value.b)
-                hue = hsv.h
-                saturation = hsv.s
-                colorValue = hsv.v
-            }
-            hsl = hsv2Hsl(hue, saturation, colorValue)
+            startColor = [value[0], value[1], value[2]]
             initializationChanged = false
         }
-
     }
 </script>
 
@@ -54,7 +33,7 @@
 >
     <div
             slot="button"
-            style={(disabled ? "cursor: default;" : "") + `min-height: ${height};max-height: ${height}; background: ${!disabled ? `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)` : "transparent"};`}
+            style={(disabled ? "cursor: default;" : "") + `min-height: ${height};max-height: ${height}; background: ${!disabled ? `rgb(${startColor[0]}, ${startColor[1]}, ${startColor[2]})` : "transparent"};`}
             class="dropdown"
     >
         {#if label}
@@ -62,12 +41,12 @@
             <ToolTip content={label}/>
         {/if}
     </div>
-    <ColorCanvas
-            setHsl={v => hsl = v}
-            hsl={hsl}
-            submit={submit}
-            value={value}
-            label={label}
+    <HsvPicker
+            startColor={startColor}
+            submit={({r,g,b}) => {
+                startColor = [r,g,b]
+                submit({r,g,b})
+            }}
     />
 </Dropdown>
 <style>
@@ -86,7 +65,8 @@
     .dropdown:hover {
         opacity: .9;
     }
-    .label{
+
+    .label {
         backdrop-filter: blur(10px) brightness(65%);
 
         font-size: .7rem;
