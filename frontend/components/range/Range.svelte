@@ -120,10 +120,6 @@
 
     }
     onMount(() => {
-        document.onpointerlockerror = (err) => {
-            console.error(err)
-            document.exitPointerLock()
-        }
         document.addEventListener("mouseup", handleMouseUp)
     })
     onDestroy(() => {

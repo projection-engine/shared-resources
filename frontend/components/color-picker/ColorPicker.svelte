@@ -5,7 +5,6 @@
 
 
     let changed = false
-    const WIDTH = 200
 
     export let submit
     export let height = "25px"
@@ -28,7 +27,7 @@
 <Dropdown
         hideArrow="true"
         width="100%"
-        styles="width: {WIDTH + 32}px; overflow: hidden"
+        styles="width: fit-content; overflow: hidden; box-shadow: var(--pj-boxshadow);"
         disabled={disabled}
 >
     <div
