@@ -11,88 +11,60 @@
         }, {once: true})
     }
 
-    const pushAlert = (message, type, onClick, delay = 3500) => {
-        let variant
-        switch (type) {
-            case "success":
-                variant = {color: "#03c403", icon: "done"}
-                break
-            case "alert":
-                variant = {color: "#d97a00", icon: "warning"}
-                break
-            case "info":
-                variant = {color: "#0095ff", icon: "info"}
-                break
-            default:
-                variant = {color: "#ff5555", icon: "error"}
-                break
-        }
-        alert.cache.push({
-            message,
-            type,
-            variant
-        })
-        if (alert.cache.length >= 25)
-            alert.cache.shift()
-
-        alert.listeners.forEach(c => c.cb())
-        if (!alert.activeAlerts)
-            return
-
-        const newElement = document.createElement("div")
-
-        let i = 0
-        while (target.children.length > 4) {
-            target.removeChild(target.children[i])
-            i++
-        }
-
-        target.appendChild(newElement)
-        target.style.zIndex = "9999"
-
-        setTimeout(() => close(newElement), delay)
-        newElement.innerHTML = `
-        <div class="alertContainer alert-modal" style="--background: ${variant.color}">
-            <div class="content alert-modal">
-                <div class="icon alert-modal">
-                    <span data-icon="-">${variant.icon}</span>
-                </div>
-                ${message}
-            </div>
-            <button class="button alert-modal" data-action="-">
-                <span data-icon="-" style="height: 1.1rem; font-size: 1.1rem">close</span>
-            </button>
-        </div>
-      `
-        if (onClick)
-            newElement.addEventListener("click", onClick, {once: true})
-
-        newElement
-            .getElementsByTagName("button")[0]
-            .addEventListener(
-                "click",
-                () => close(newElement),
-                {once: true}
-            )
-    }
     onMount(() => {
-        alert.clearCache = () => {
-            alert.cache = []
-            alert.listeners.forEach(e => e.cb())
+        alert.pushAlert = (message, type, onClick, delay = 3500) => {
+            let variant
+            switch (type) {
+                case "success":
+                    variant = {color: "#03c403", icon: "done"}
+                    break
+                case "alert":
+                    variant = {color: "#d97a00", icon: "warning"}
+                    break
+                case "info":
+                    variant = {color: "#0095ff", icon: "info"}
+                    break
+                default:
+                    variant = {color: "#ff5555", icon: "error"}
+                    break
+            }
+
+            const newElement = document.createElement("div")
+
+            let i = 0
+            while (target.children.length > 4) {
+                target.removeChild(target.children[i])
+                i++
+            }
+
+            target.appendChild(newElement)
+            target.style.zIndex = "9999"
+
+            setTimeout(() => close(newElement), delay)
+            newElement.innerHTML = `
+                <div class="alertContainer alert-modal" style="--background: ${variant.color}">
+                    <div class="content alert-modal">
+                        <div class="icon alert-modal">
+                            <span data-icon="-">${variant.icon}</span>
+                        </div>
+                        ${message}
+                    </div>
+                    <button class="button alert-modal" data-action="-">
+                        <span data-icon="-" style="height: 1.1rem; font-size: 1.1rem">close</span>
+                    </button>
+                </div>
+            `
+            if (onClick)
+                newElement.addEventListener("click", onClick, {once: true})
+
+            newElement
+                .getElementsByTagName("button")[0]
+                .addEventListener(
+                    "click",
+                    () => close(newElement),
+                    {once: true}
+                )
         }
-        alert.listeners = []
-        alert.bindListener = (key, cb) => {
-            alert.listeners.push({key, cb})
-        }
-        alert.removeListener = (key) => {
-            alert.listeners = alert.listeners.filter(v => v.key !== key)
-        }
-        alert.cache = []
-        alert.activeAlerts = true
-        alert.toggleAlerts = () => {
-            alert.activeAlerts = !alert.activeAlerts
-        }
-        alert.pushAlert = pushAlert
     })
 </script>
 
